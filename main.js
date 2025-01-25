@@ -11,88 +11,129 @@ let deleteAll = document.getElementById('deleteAll');
 let search = document.getElementById('search');
 let labelSearch = document.getElementById('labelSearch');
 let SearchMood = 'products';
-let labels = document.getElementsByTagName('label');
 let productValidation = document.getElementById('productValidation');
 let priceValidation = document.getElementById('priceValidation');
 let categoryValidation = document.getElementById('categoryValidation');
 
+let productData = localStorage.productStorage ? JSON.parse(localStorage.productStorage) : [];
+
 // function-total
 function CalculTotal() {
-    if (price.value != '') {
+    if (price.value !== '') {
         let result = (+price.value + +taxes.value + +ads.value) - +discount.value;
         total.innerHTML = result;
         total.classList.remove("bg-primary");
         total.classList.add("bg-success");
-    }
-    else {
+    } else {
         total.innerHTML = " ";
         total.classList.remove("bg-success");
         total.classList.add("bg-primary");
     }
 }
 
-// function-create-validation
-let productData;
-if (localStorage.productStorage != null) {
-    productData = JSON.parse(localStorage.productStorage)
-}
-else {
-    productData = [];
-}
+// input validation functions
+price.oninput = function () {
+    if (+price.value < 0) {
+        price.value = '';
+        price.classList.add('is-invalid');
+        total.classList.add('bg-danger');
+        priceValidation.classList.add('invalid-feedback');
+        priceValidation.innerHTML = '* only positive number';
+    } else {
+        total.classList.remove('bg-danger');
+        price.classList.remove('is-invalid');
+        price.classList.add('is-valid');
+        priceValidation.classList.remove('invalid-feedback');
+        priceValidation.innerHTML = '';
+    }
+};
 
+products.oninput = function () {
+    products.value = products.value.replace(/^[^a-zA-Z]+/, '');
+    if (!/^[a-zA-Z]*$/.test(products.value)) {
+        products.classList.add('is-invalid');
+        productValidation.classList.add('invalid-feedback');
+        productValidation.innerHTML = '* only letters are allowed';
+    } else {
+        products.classList.remove('is-invalid');
+        products.classList.add('is-valid');
+        productValidation.classList.remove('invalid-feedback');
+        productValidation.innerHTML = '';
+    }
+};
+
+category.oninput = function () {
+    category.value = category.value.replace(/^[^a-zA-Z]+/, '');
+    if (!/^[a-zA-Z]*$/.test(category.value)) {
+        category.classList.add('is-invalid');
+        categoryValidation.classList.add('invalid-feedback');
+        categoryValidation.innerHTML = '* only letters are allowed';
+    } else {
+        category.classList.remove('is-invalid');
+        category.classList.add('is-valid');
+        categoryValidation.classList.remove('invalid-feedback');
+        categoryValidation.innerHTML = '';
+    }
+};
+
+// function-create-validation
 function createProduct() {
     let productObject = {
-        products: products.value,
+        products: products.value.trim().replace(/^[^a-zA-Z]+/, ''),
         price: price.value,
         taxes: taxes.value,
         ads: ads.value,
         discount: discount.value,
         total: total.innerHTML,
         count: count.value,
-        category: category.value,
+        category: category.value.trim().replace(/^[^a-zA-Z]+/, ''),
     }
-    if (products.value != '' && price.value != '' && category.value != '') {
-        if (productObject.count > 1) {
-            for (let i = 0; i < productObject.count; i++) {
-                productData.push(productObject);
-            }
-        } else {
+    if (productObject.products && price.value && productObject.category && +price.value >= 0) {
+        for (let i = 0; i < (productObject.count > 1 ? productObject.count : 1); i++) {
             productData.push(productObject);
         }
         localStorage.setItem('productStorage', JSON.stringify(productData));
         clearInputs();
         readData();
     } else {
-        if (products.value == '') {
-            products.classList.add('is-invalid');
-            productValidation.classList.add('invalid-feedback');
-            productValidation.innerHTML = '* Product is required';
-        } else {
-            products.classList.remove('is-invalid');
-            products.classList.add('is-valid');
-            productValidation.classList.remove('invalid-feedback');
-            productValidation.innerHTML = '';
+        validateInputs(productObject);
+    }
+}
+
+function validateInputs(productObject) {
+    if (!productObject.products) {
+        products.classList.add('is-invalid');
+        productValidation.classList.add('invalid-feedback');
+        productValidation.innerHTML = '* Product is required and must start with a letter';
+    } else {
+        products.classList.remove('is-invalid');
+        products.classList.add('is-valid');
+        productValidation.classList.remove('invalid-feedback');
+        productValidation.innerHTML = '';
+    }
+    if (!price.value || +price.value < 0) {
+        price.classList.add('is-invalid');
+        priceValidation.classList.add('invalid-feedback');
+        priceValidation.innerHTML = '* Price is required and must be a positive number';
+        if (+price.value < 0) {
+            price.classList.add('bg-danger');
         }
-        if (price.value == '') {
-            price.classList.add('is-invalid');
-            priceValidation.classList.add('invalid-feedback');
-            priceValidation.innerHTML = '* Price is required';
-        } else {
-            price.classList.remove('is-invalid');
-            price.classList.add('is-valid');
-            priceValidation.classList.remove('invalid-feedback');
-            priceValidation.innerHTML = '';
-        }
-        if (category.value == '') {
-            category.classList.add('is-invalid');
-            categoryValidation.classList.add('invalid-feedback');
-            categoryValidation.innerHTML = '* Category is required';
-        } else {
-            category.classList.remove('is-invalid');
-            category.classList.add('is-valid');
-            categoryValidation.classList.remove('invalid-feedback');
-            categoryValidation.innerHTML = '';
-        }
+    } else {
+        price.classList.remove('is-invalid');
+        price.classList.add('is-valid');
+        priceValidation.classList.remove('invalid-feedback');
+        priceValidation.innerHTML = '';
+        price.classList.remove('bg-danger');
+    }
+    if (!productObject.category) {
+        category.classList.add('is-invalid');
+        categoryValidation.classList.add('invalid-feedback');
+        categoryValidation.innerHTML = '* Category is required and must start with a letter';
+    } else {
+        category.classList.remove('is-invalid');
+        category.classList.add('is-valid');
+        categoryValidation.classList.remove('invalid-feedback');
+        categoryValidation.innerHTML = '';
     }
 }
 
@@ -110,19 +151,17 @@ function clearInputs() {
     category.value = '';
     total.classList.remove("bg-success");
     total.classList.add("bg-primary");
-    products.classList.remove('is-invalid');
-    products.classList.remove('is-valid');
+    products.classList.remove('is-invalid', 'is-valid');
     productValidation.classList.remove('invalid-feedback');
     productValidation.innerHTML = '';
-    price.classList.remove('is-invalid');
-    price.classList.remove('is-valid');
+    price.classList.remove('is-invalid', 'is-valid', 'bg-danger');
     priceValidation.classList.remove('invalid-feedback');
     priceValidation.innerHTML = '';
-    category.classList.remove('is-invalid');
-    category.classList.remove('is-valid');
+    category.classList.remove('is-invalid', 'is-valid');
     categoryValidation.classList.remove('invalid-feedback');
     categoryValidation.innerHTML = '';
 }
+
 // function-read
 function readData() {
     let table = '';
@@ -146,26 +185,28 @@ function readData() {
         deleteAll.classList.remove('deletehide');
         deleteAll.classList.add('deleteshow');
         deleteAll.value = `Delete All (${productData.length})`;
-    }
-    else {
+    } else {
         deleteAll.classList.remove('deleteshow');
         deleteAll.classList.add('deletehide');
         deleteAll.value = `Delete All`;
     }
 }
-readData()
+readData();
+
 // function-delete
 function deleteProduct(i) {
     productData.splice(i, 1);
     localStorage.setItem('productStorage', JSON.stringify(productData));
     readData();
 }
+
 // delete-all
 deleteAll.onclick = function () {
     productData = [];
     localStorage.setItem('productStorage', JSON.stringify(productData));
     readData();
 }
+
 // function-update
 function updateProduct(i) {
     products.value = productData[i].products;
@@ -180,9 +221,10 @@ function updateProduct(i) {
     localStorage.setItem('productStorage', JSON.stringify(productData));
     readData();
 }
+
 // function-search
 function getSearchMood(id) {
-    if (id == 'searchProduct') {
+    if (id === 'searchProduct') {
         SearchMood = 'products';
         labelSearch.innerHTML = 'Search By Products';
     } else {
@@ -196,7 +238,7 @@ search.oninput = function () {
     let searchValue = search.value.toLowerCase();
     let table = '';
     for (let i = 0; i < productData.length; i++) {
-        if (SearchMood == 'products' && productData[i].products.toLowerCase().includes(searchValue)) {
+        if (SearchMood === 'products' && productData[i].products.toLowerCase().includes(searchValue)) {
             table += `
             <tr>
                 <td>${i}</td>
@@ -210,7 +252,7 @@ search.oninput = function () {
                 <td><button class="btn btn-primary" onclick="updateProduct(${i})">Update</button></td>
                 <td><button class="btn btn-primary" onclick="deleteProduct(${i})">Delete</button></td>
             </tr>`;
-        } else if (SearchMood == 'category' && productData[i].category.toLowerCase().includes(searchValue)) {
+        } else if (SearchMood === 'category' && productData[i].category.toLowerCase().includes(searchValue)) {
             table += `
             <tr>
                 <td>${i}</td>
