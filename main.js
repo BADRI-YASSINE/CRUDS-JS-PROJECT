@@ -40,9 +40,9 @@ function createProduct() {
     let productObject = {
         products: products.value.trim().replace(/^[^a-zA-Z]+/, ''),
         price: price.value,
-        taxes: taxes.value,
-        ads: ads.value,
-        discount: discount.value,
+        taxes: taxes.value || '0',
+        ads: ads.value || '0',
+        discount: discount.value || '0',
         total: total.innerHTML,
         count: count.value,
         category: category.value.trim().replace(/^[^a-zA-Z]+/, ''),
@@ -168,9 +168,9 @@ deleteAll.onclick = function () {
 function updateProduct(i) {
     products.value = productData[i].products;
     price.value = productData[i].price;
-    taxes.value = productData[i].taxes;
-    ads.value = productData[i].ads;
-    discount.value = productData[i].discount;
+    taxes.value = productData[i].taxes || '0';
+    ads.value = productData[i].ads || '0';
+    discount.value = productData[i].discount || '0';
     total.innerHTML = productData[i].total;
     count.value = productData[i].count;
     category.value = productData[i].category;
@@ -192,7 +192,7 @@ function getSearchMood(id) {
 }
 
 search.oninput = function () {
-    let searchValue = search.value.toLowerCase();
+    let searchValue = search.value.trimStart().toLowerCase();
     let table = '';
     for (let i = 0; i < productData.length; i++) {
         if (SearchMood === 'products' && productData[i].products.toLowerCase().includes(searchValue)) {
