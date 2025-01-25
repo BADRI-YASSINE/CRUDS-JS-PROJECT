@@ -31,50 +31,9 @@ function CalculTotal() {
     }
 }
 
-// input validation functions
-price.oninput = function () {
-    if (+price.value < 0) {
-        price.value = '';
-        price.classList.add('is-invalid');
-        total.classList.add('bg-danger');
-        priceValidation.classList.add('invalid-feedback');
-        priceValidation.innerHTML = '* only positive number';
-    } else {
-        total.classList.remove('bg-danger');
-        price.classList.remove('is-invalid');
-        price.classList.add('is-valid');
-        priceValidation.classList.remove('invalid-feedback');
-        priceValidation.innerHTML = '';
-    }
-};
 
-products.oninput = function () {
-    products.value = products.value.replace(/^[^a-zA-Z]+/, '');
-    if (!/^[a-zA-Z]*$/.test(products.value)) {
-        products.classList.add('is-invalid');
-        productValidation.classList.add('invalid-feedback');
-        productValidation.innerHTML = '* only letters are allowed';
-    } else {
-        products.classList.remove('is-invalid');
-        products.classList.add('is-valid');
-        productValidation.classList.remove('invalid-feedback');
-        productValidation.innerHTML = '';
-    }
-};
 
-category.oninput = function () {
-    category.value = category.value.replace(/^[^a-zA-Z]+/, '');
-    if (!/^[a-zA-Z]*$/.test(category.value)) {
-        category.classList.add('is-invalid');
-        categoryValidation.classList.add('invalid-feedback');
-        categoryValidation.innerHTML = '* only letters are allowed';
-    } else {
-        category.classList.remove('is-invalid');
-        category.classList.add('is-valid');
-        categoryValidation.classList.remove('invalid-feedback');
-        categoryValidation.innerHTML = '';
-    }
-};
+
 
 // function-create-validation
 function createProduct() {
