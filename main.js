@@ -63,7 +63,7 @@ function validateInputs(productObject) {
     if (!productObject.products) {
         products.classList.add('is-invalid');
         productValidation.classList.add('invalid-feedback');
-        productValidation.innerHTML = '* Product is required / Only letter';
+        productValidation.innerHTML = '* It must contain letters';
     } else {
         products.classList.remove('is-invalid');
         products.classList.add('is-valid');
@@ -85,7 +85,7 @@ function validateInputs(productObject) {
     if (!productObject.category) {
         category.classList.add('is-invalid');
         categoryValidation.classList.add('invalid-feedback');
-        categoryValidation.innerHTML = '* Category is required / Only letter';
+        categoryValidation.innerHTML = '* It must contain letters';
     } else {
         category.classList.remove('is-invalid');
         category.classList.add('is-valid');
