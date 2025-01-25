@@ -63,7 +63,7 @@ function validateInputs(productObject) {
     if (!productObject.products) {
         products.classList.add('is-invalid');
         productValidation.classList.add('invalid-feedback');
-        productValidation.innerHTML = '* Product is required and must start with a letter';
+        productValidation.innerHTML = '* Product is required / Only letter';
     } else {
         products.classList.remove('is-invalid');
         products.classList.add('is-valid');
@@ -73,10 +73,8 @@ function validateInputs(productObject) {
     if (!price.value || +price.value < 0) {
         price.classList.add('is-invalid');
         priceValidation.classList.add('invalid-feedback');
-        priceValidation.innerHTML = '* Price is required and must be a positive number';
-        if (+price.value < 0) {
-            price.classList.add('bg-danger');
-        }
+        priceValidation.innerHTML = '* Price is required';
+
     } else {
         price.classList.remove('is-invalid');
         price.classList.add('is-valid');
@@ -87,7 +85,7 @@ function validateInputs(productObject) {
     if (!productObject.category) {
         category.classList.add('is-invalid');
         categoryValidation.classList.add('invalid-feedback');
-        categoryValidation.innerHTML = '* Category is required and must start with a letter';
+        categoryValidation.innerHTML = '* Category is required / Only letter';
     } else {
         category.classList.remove('is-invalid');
         category.classList.add('is-valid');
